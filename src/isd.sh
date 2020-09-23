@@ -19,7 +19,7 @@ _CPP_NOREADPERM=4
 _LATEX_NOREADPERM=5
 _MAKFILE_NOREADPERM=6
 _INVALID_USER_PATH=7
-_NOARG=8
+_ARG_ERR=8
 _MKDIR_ERR=9
 _TOUCH_ERR=10
 _COPY_ERR=11
@@ -50,7 +50,7 @@ function PrintHelp() {
              "5 - latex template file at: $_LATEX_TEMPLATE_PATH is not readable"\
              "6 - makefile file at $_MAKEFILE_TEMPLATE_PATH is not readable"\
              "7 - invalid user-specified path"\
-             "8 - DIR_NAME arg was not given"\
+             "8 - DIR_NAME arg was not given or too many args"\
              "9 - failed to create directory"\
              "10 - failed to create at least one of the files"\
              "11 - failed to copy at least one template"
@@ -75,27 +75,27 @@ done
 ##################################################################################################
 # check if paths are valid and if files are readable
 if [[ ! -f $_CPP_TEMPLATE_PATH ]]; then
-    test $_VERBOSE && printf "%s\n" "File not found: $_CPP_TEMPLATE_PATH"
-    test $_FORCE && exit $_CPPFNF
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "File not found: $_CPP_TEMPLATE_PATH"
+    [[ $_FORCE -eq 1 ]] && exit $_CPPFNF
 elif [[ ! -r $_CPP_TEMPLATE_PATH ]]; then
-    test $_VERBOSE && printf "%s\n" "File not readable: $_CPP_TEMPLATE_PATH"
-    test $_FORCE && exit $_CPP_NOREADPERM
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "File not readable: $_CPP_TEMPLATE_PATH"
+    [[ $_FORCE -eq 1 ]] && exit $_CPP_NOREADPERM
 fi
 
 if [[ ! -f $_LATEX_TEMPLATE_PATH ]]; then 
-    test $_VERBOSE && printf "%s\n" "File not found: $_LATEX_TEMPLATE_PATH"
-    test $_FORCE && exit $_LATEXFNF
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "File not found: $_LATEX_TEMPLATE_PATH"
+    [[ $_FORCE -eq 1 ]] && exit $_LATEXFNF
 elif [[ ! -r $_LATEX_TEMPLATE_PATH ]]; then 
-    test $_VERBOSE && printf "%s\n" "File not readable: $_LATEX_TEMPLATE_PATH"
-    test $_FORCE && exit $_LATEX_NOREADPERM
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "File not readable: $_LATEX_TEMPLATE_PATH"
+    [[ $_FORCE -eq 1 ]] && exit $_LATEX_NOREADPERM
 fi
 
 if [[ ! -f $_MAKEFILE_TEMPLATE_PATH ]]; then
-    test $_VERBOSE && printf "%s\n" "File not found: $_MAKEFILE_TEMPLATE_PATH"
-    test $_FORCE && exit $_MAKEFILEFNF
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "File not found: $_MAKEFILE_TEMPLATE_PATH"
+    [[ $_FORCE -eq 1 ]] && exit $_MAKEFILEFNF
 elif [[ ! -r $_MAKEFILE_TEMPLATE_PATH ]]; then
-    test $_VERBOSE && printf "%s\n" "File not readable: $_MAKEFILE_TEMPLATE_PATH"
-    test $_FORCE && exit $_MAKFILE_NOREADPERM
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "File not readable: $_MAKEFILE_TEMPLATE_PATH"
+    [[ $_FORCE -eq 1 ]] && exit $_MAKFILE_NOREADPERM
 fi
 
 if (( $_USERSPECPATH == 1 )); then
@@ -115,7 +115,7 @@ if (( $# == $_ARGCOUNT_NO_OPTS )); then
     dir_name=$1
 elif (( $# < $_ARGCOUNT_NO_OPTS )); then
     printf "%s\n" "DIR_NAME arg was not given"
-    exit $_NOARG
+    exit $_ARG_ERR
 else 
     printf "%s\n" "Too many positional args" "Expected $_ARGCOUNT_NO_OPTS" "Received $#" "Arg list: "
     for arg in $*;
@@ -126,13 +126,13 @@ else
 fi
 ##################################################################################################
 # create folder 
-test $_VERBOSE && printf "%s\n" "Making directory $_PATH/$dir_name"
+[[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Making directory $_PATH/$dir_name"
 mkdir "$_PATH/$dir_name"
 
 if (( $? == 0 )); then
-    test $_VERBOSE  && printf "%s\n" "Directory created succesfuly"
+    [[ $_VERBOSE -eq 1 ]]  && printf "%s\n" "Directory created succesfuly"
 else 
-    $_VERBOSE && printf "%s\n" "Failed to create directory!"
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Failed to create directory!"
     exit $_MKDIR_ERR
 fi
 ##################################################################################################
@@ -141,13 +141,13 @@ fi
 # first changing directory to new-created directory
 cd "${_PATH}/${dir_name}"
 
-test $_VERBOSE && printf "%s\n" "Creating $_PATH/$dir_name/main.cpp"
+[[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Creating $_PATH/$dir_name/main.cpp"
 touch main.cpp
 
 if (( $? == 0 )); then
-    test $_VERBOSE && printf "%s\n" "File created succesfuly"
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "File created succesfuly"
 else 
-    test $_VERBOSE && printf "%s\n" "Failed to create file"
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Failed to create file"
     if (( $_FORCE == 1 )); then
         printf "%s\n" "Proceeding..."
     else
@@ -157,13 +157,13 @@ fi
 ##################################################################################################
 # creating .tex file
 
-test $_VERBOSE && printf "%s\n" "Creating $_PATH/$dir_name/$dir_name.tex"
+[[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Creating $_PATH/$dir_name/$dir_name.tex"
 touch "$dir_name.tex"
 
 if (( $? == 0 )); then
-    test $_VERBOSE && printf "%s\n" "File created succesfuly"
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "File created succesfuly"
 else 
-    test $_VERBOSE && printf "%s\n" "Failed to create file"
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Failed to create file"
     if (( $_FORCE == 1 )); then
         printf "%s\n" "Proceeding..."
     else
@@ -173,13 +173,13 @@ fi
 ##################################################################################################
 # creating makefile
 
-test $_VERBOSE && printf "%s\n" "Creating $_PATH/$dir_name/Makefile"
+[[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Creating $_PATH/$dir_name/Makefile"
 touch "Makefile"
 
 if (( $? == 0 )); then
-    test $_VERBOSE && printf "%s\n" "File created succesfuly"
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "File created succesfuly"
 else 
-    test $_VERBOSE && printf "%s\n" "Failed to create file"
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Failed to create file"
     if (( $_FORCE == 1 )); then
         printf "%s\n" "Proceeding..."
     else
@@ -189,13 +189,13 @@ fi
 ##################################################################################################
 # Copying cpp template
 
-test $_VERBOSE && printf "%s\n" "Copying content of $_CPP_TEMPLATE_PATH to $_PATH/$dir_name/main.cpp"
+[[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Copying content of $_CPP_TEMPLATE_PATH to $_PATH/$dir_name/main.cpp"
 echo "$($_CPP_TEMPLATE_PATH $dir_name)" > "$_PATH/$dir_name/main.cpp"
 
 if (( $? == 0 )); then
-    test $_VERBOSE && printf "%s\n" "Copied succesfuly"
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Copied succesfuly"
 else 
-    test $_VERBOSE && printf "%s\n" "Failed to copy"
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Failed to copy"
     if (( $_FORCE == 1 )); then
         printf "%s\n" "Proceeding..."
     else
@@ -205,13 +205,13 @@ fi
 ##################################################################################################
 # Copying latex template
 
-test $_VERBOSE && printf "%s\n" "Copying content of $_LATEX_TEMPLATE_PATH to $_PATH/$dir_name/$dirname.tex"
+[[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Copying content of $_LATEX_TEMPLATE_PATH to $_PATH/$dir_name/$dirname.tex"
 echo "$($_LATEX_TEMPLATE_PATH $dir_name)" > "$_PATH/$dir_name/$dir_name.tex"
 
 if (( $? == 0 )); then
-    test $_VERBOSE && printf "%s\n" "Copied succesfuly"
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Copied succesfuly"
 else 
-    test $_VERBOSE && printf "%s\n" "Failed to copy"
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Failed to copy"
     if (( $_FORCE == 1 )); then
         printf "%s\n" "Proceeding..."
     else
@@ -221,13 +221,13 @@ fi
 ##################################################################################################
 # Copying makefile
 
-test $_VERBOSE && printf "%s\n" "Copying content of $_LATEX_TEMPLATE_PATH to $_PATH/$dir_name/$dirname.tex"
+[[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Copying content of $_LATEX_TEMPLATE_PATH to $_PATH/$dir_name/$dirname.tex"
 cp "$_MAKEFILE_TEMPLATE_PATH" "$_PATH/$dir_name/Makefile"
 
 if (( $? == 0 )); then
-    test $_VERBOSE && printf "%s\n" "Copied succesfuly"
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Copied succesfuly"
 else 
-    test $_VERBOSE && printf "%s\n" "Failed to copy"
+    [[ $_VERBOSE -eq 1 ]] && printf "%s\n" "Failed to copy"
     if (( $_FORCE == 1 )); then
         printf "%s\n" "Proceeding..."
     else
@@ -235,5 +235,5 @@ else
     fi
 fi
 ##################################################################################################
-exit 0
+exit $_SUCCESS
 ##################################################################################################
