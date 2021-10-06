@@ -32,15 +32,40 @@ log_and_exit() {
 	exit "$2";
 }
 
+log_and_exit_opt() {
+	echo "$1";
+	if [[ ! -z "$3" ]]; then
+		echo "$3";
+	fi
+	exit "$2";
+}
+
+# params:
+#		1 -- path
+#		2 -- message (optional)
 assert_dir_exists() {
 	if [[ ! -d "$1" ]]; then
-		log_and_exit "Directory $1 not found. Make sure that the directory exists." "${ret_fnf}"
+		log_and_exit_opt "Assertion failed: assert_dir_exists: Directory $1 not found. Make sure that the directory exists." "${ret_fnf}" "$2"
 	fi
 }
 
+# params:
+#		1 -- actual value
+#		2 -- expected value
+#		3 -- message (optional)
 assert_equals() {
 	if [[ "$1" -ne "$2" ]]; then
-		log_and_exit "Assertion failed. Received: $1. Expected: $2" "${ret_assert_err}"
+		log_and_exit_opt "Assertion failed: assert_equals. Received: $1. Expected: $2" "${ret_assert_err}" "$3"
+	fi
+}
+
+# params:
+#		1 -- first value
+#		2 -- second value
+# 	3 -- message (optional)
+assert_not_equals() {
+	if [[ "$1" -eq "$2" ]]; then
+		log_and_exit_opt "Assertion failed: assert_not_equals. Received $1. Expected: not $2" "${ret_assert_err}" "$3"
 	fi
 }
 
@@ -67,34 +92,13 @@ project_parent_dir=${project_parent_dir:=$(pwd)}
 
 assert_dir_exists "${templ_dir}"
 assert_dir_exists "${project_parent_dir}"
-
-if [[ $# -ne ${arg_count} ]]; then
-  echo "Invalid arg count. Expected: ${arg_count}."
-  usage
-  exit ${ret_bad_arg_count}
-fi
+assert_equals $# ${arg_count} "Invalid arg count. Expected: ${arg_count}"
 
 project_name=$1
 project_dir=${project_parent_dir}/${project_name}
 
 log ${verbose} "Initializing project of name ${project_name} in ${project_parent_dir} directory."
  
-log ${verbose} "Creating ${project_parent_dir}/${project_name} directory"
-mkdir ${project_dir}
-
-log ${verbose} "Creating project structure..."
-[ ${verbose} -eq 0 ]  && echo "Creating project structure..."
-
-[ ${verbose} -eq 0 ]  && echo -e "\tCreate src dir"
-mkdir ${project_dir}/src
-
-[ ${verbose} -eq 0 ]  && echo -e "\tCreate build/{bin,obj} dirs"
-mkdir -p ${project_dir}/build/{bin,obj}
-
-[ ${verbose} -eq 0 ]  && echo -e "\tCreate main.cpp file"
-cp ${TEMP_CFILE_PATH} ${project_dir}/src/main.cpp
-
-[ ${verbose} -eq 0 ]  && echo -e "\tCreate makefile"
-cp ${TEMP_MAKEFILE_PATH} ${project_dir}/makefile
+cp -rv ${templ_dir} ${project_dir}
 
 exit ${ret_success};
