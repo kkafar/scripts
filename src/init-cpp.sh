@@ -99,6 +99,10 @@ project_dir=${project_parent_dir}/${project_name}
 
 log ${verbose} "Initializing project of name ${project_name} in ${project_parent_dir} directory."
  
-cp -rv ${templ_dir} ${project_dir}
+if [[ ${verbose} -eq 0 ]]; then
+	cp -rv ${templ_dir} ${project_dir}
+else
+	cp -r ${templ_dir} ${project_dir}
+fi
 
 exit ${ret_success};
