@@ -5,22 +5,18 @@ BIN_PATH = build/bin
 OBJ_PATH = build/obj
 
 CC = gcc
-CFLAGS = -Wall -c
+CFLAGS = -Wall
 LFLAGS = -Wall
 
-SOURCES = $(wildcard $(SRC_PATH)/*)
+SOURCES = $(wildcard $(SRC_PATH)/*.c)
 OBJECTS = $(OBJ_PATH)/$(patsubst %.c,%.o,$(notdir $(SOURCES)))	
 BIN_NAME = main
 
 build: $(OBJECTS)
-	$(CC) $(LFLAGS) $^ -o $(BIN_PATH)/$(BIN_NAME)
-
-compile: $(OBJ_PATH)/%.o
-	$(CC) $(CFLAGS) $^ -o $(OBJ_PATH)/$(notdir $@)
-
+	$(CC) -o $(BIN_PATH)/$(BIN_NAME) $(LFLAGS) $^
 
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
-	$(CC) $(CFLAGS) $^ -o $(OBJ_PATH)/$(notdir $@)
+	$(CC) -o $(OBJ_PATH)/$(notdir $@) -c $^ $(CFLAGS)
 
 run: build
 	./$(BIN_PATH)/$(BIN_NAME)
