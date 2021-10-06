@@ -9,7 +9,7 @@ CFLAGS = -Wall
 LFLAGS = -Wall
 
 SOURCES = $(wildcard $(SRC_PATH)/*.c)
-OBJECTS = $(OBJ_PATH)/$(patsubst %.c,%.o,$(notdir $(SOURCES)))	
+OBJECTS = $(addprefix $(OBJ_PATH)/,$(patsubst %.c,%.o,$(notdir $(SOURCES))))
 BIN_NAME = main
 
 build: $(OBJECTS)
