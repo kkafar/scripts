@@ -1,22 +1,20 @@
 #!/bin/bash
 
-# TEMPLATES
-TEMP_MAKEFILE_PATH=${TEMPLATES_PATH}/makefile-cpp
-TEMP_CFILE_PATH=${TEMPLATES_PATH}/main.cpp
+templ_dir=${TEMPLATES_PATH}/cpp-templ
 
 # RETURN CODES 
-RET_SUCCESS=0
-RET_TEMP_FILE_NOT_FOUND=1
-RET_BAD_ARG_COUNT=2
+ret_success=0
+ret_fnf=1
+ret_bad_arg_count=2
 
 # OPTIONS
-OPT_STRING="hvd:"
+opt_str="hvd:"
 
-ARG_COUNT=1
+arg_count=1
 
 usage() { 
   echo "Usage: $0 [-h (prints this help message)] [-v (verbose mode)] [-d <path> (directory to init)] <project name>"; 
-  exit ${RET_SUCCESS}; 
+  exit ${ret_success}; 
 }
 
 # 
@@ -28,67 +26,67 @@ log() {
 	[ "$1" -eq 0 ] && echo "$2"
 }
 
-while getopts ${OPT_STRING} opts;
+while getopts ${opt_str} opts;
 do
   case $opts in
     "h") 
       usage
-      exit ${RET_SUCCESS}
+      exit ${ret_success}
       ;;
     "v")
-      VERBOSE=0
+      verbose=0
       ;;
     "d")
-      DIRECTORY=${OPTARG}
+      project_parent_dir=${OPTARG}
       ;;
   esac
 done
 
 shift "$(( $OPTIND - 1 ))"
 
-VERBOSE=${VERBOSE:=1}
-DIRECTORY=${DIRECTORY:=$(pwd)}
+verbose=${verbose:=1}
+project_parent_dir=${project_parent_dir:=$(pwd)}
 
 if [[ ! -f ${TEMP_MAKEFILE_PATH} ]]; then
   echo "File ${TEMP_MAKEFILE_PATH} not found. Ensure that correct path is provided in script source."
-  exit ${RET_TEMP_FILE_NOT_FOUND}
+  exit ${ret_fnf}
 elif [[ ! -f ${TEMP_CFILE_PATH} ]]; then
   echo "File ${TEMP_CFILE_PATH} not found. Ensure that correct path is provided in script source."
-  exit ${RET_TEMP_FILE_NOT_FOUND}
+  exit ${ret_fnf}
 fi
 
-if [[ ! -d ${DIRECTORY} ]]; then
-  echo "Directory ${DIRECTORY} not found. Ensure that the directory exists."
-  exit ${RET_TEMP_FILE_NOT_FOUND}
+if [[ ! -d ${project_parent_dir} ]]; then
+  echo "Directory ${project_parent_dir} not found. Ensure that the directory exists."
+  exit ${ret_fnf}
 fi
 
-if [[ $# -ne ${ARG_COUNT} ]]; then
-  echo "Invalid arg count. Expected: ${ARG_COUNT}."
+if [[ $# -ne ${arg_count} ]]; then
+  echo "Invalid arg count. Expected: ${arg_count}."
   usage
-  exit ${RET_BAD_ARG_COUNT}
+  exit ${ret_bad_arg_count}
 fi
 
-PROJECT_NAME=$1
-PROJECT_DIR=${DIRECTORY}/${PROJECT_NAME}
+project_name=$1
+project_dir=${project_parent_dir}/${project_name}
 
-log ${VERBOSE} "Initializing project of name ${PROJECT_NAME} in ${DIRECTORY} directory."
+log ${verbose} "Initializing project of name ${project_name} in ${project_parent_dir} directory."
  
-log ${VERBOSE} "Creating ${DIRECTORY}/${PROJECT_NAME} directory"
-mkdir ${PROJECT_DIR}
+log ${verbose} "Creating ${project_parent_dir}/${project_name} directory"
+mkdir ${project_dir}
 
-log ${VERBOSE} "Creating project structure..."
-[ ${VERBOSE} -eq 0 ]  && echo "Creating project structure..."
+log ${verbose} "Creating project structure..."
+[ ${verbose} -eq 0 ]  && echo "Creating project structure..."
 
-[ ${VERBOSE} -eq 0 ]  && echo -e "\tCreate src dir"
-mkdir ${PROJECT_DIR}/src
+[ ${verbose} -eq 0 ]  && echo -e "\tCreate src dir"
+mkdir ${project_dir}/src
 
-[ ${VERBOSE} -eq 0 ]  && echo -e "\tCreate build/{bin,obj} dirs"
-mkdir -p ${PROJECT_DIR}/build/{bin,obj}
+[ ${verbose} -eq 0 ]  && echo -e "\tCreate build/{bin,obj} dirs"
+mkdir -p ${project_dir}/build/{bin,obj}
 
-[ ${VERBOSE} -eq 0 ]  && echo -e "\tCreate main.cpp file"
-cp ${TEMP_CFILE_PATH} ${PROJECT_DIR}/src/main.cpp
+[ ${verbose} -eq 0 ]  && echo -e "\tCreate main.cpp file"
+cp ${TEMP_CFILE_PATH} ${project_dir}/src/main.cpp
 
-[ ${VERBOSE} -eq 0 ]  && echo -e "\tCreate makefile"
-cp ${TEMP_MAKEFILE_PATH} ${PROJECT_DIR}/makefile
+[ ${verbose} -eq 0 ]  && echo -e "\tCreate makefile"
+cp ${TEMP_MAKEFILE_PATH} ${project_dir}/makefile
 
-exit ${RET_SUCCESS};
+exit ${ret_success};
