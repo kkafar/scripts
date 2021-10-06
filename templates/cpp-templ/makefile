@@ -8,7 +8,7 @@ CXX = g++
 CFLAGS = --std=c++17 -Wall
 LFLAGS = --std=c++17 -Wall
 
-SOURCES = $(wildcard $(SRC_PATH)/*)
+SOURCES = $(wildcard $(SRC_PATH)/*.cpp)
 OBJECTS = $(OBJ_PATH)/$(patsubst %.cpp,%.o,$(notdir $(SOURCES)))	
 BIN_NAME = main
 
