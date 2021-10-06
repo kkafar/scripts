@@ -1,22 +1,21 @@
 #!/bin/bash
 
-# TEMPLATES
-TEMP_MAKEFILE_PATH=${TEMPLATES_PATH}/makefile-c
-TEMP_CFILE_PATH=${TEMPLATES_PATH}/main.c
+templ_dir=${TEMPLATES_PATH}/c-templ
 
 # RETURN CODES 
-RET_SUCCESS=0
-RET_TEMP_FILE_NOT_FOUND=1
-RET_BAD_ARG_COUNT=2
+ret_success=0
+ret_fnf=1
+ret_bad_arg_count=2
+ret_assert_err=3
 
 # OPTIONS
-OPT_STRING="hvd:"
+opt_str="hvd:"
 
-ARG_COUNT=1
+arg_count=1
 
 usage() { 
-  echo "Usage: $0 [-h (prints this help message)] [-v (verbose mode)] [-d <path> (directory to init)] <project name>"; 
-  exit ${RET_SUCCESS}; 
+  echo "Usage: $0 [-h (prints this help message)] [-v (verbose mode)] [-d <path> (parent directory of new project)] <project name>";
+  exit ${ret_success}; 
 }
 
 # 
@@ -24,66 +23,86 @@ info() {
   echo "Initializing $1 directory";
 }
 
-while getopts ${OPT_STRING} opts;
+log() {
+	[ "$1" -eq 0 ] && echo "$2"
+}
+
+log_and_exit() {
+	echo "$1";
+	exit "$2";
+}
+
+log_and_exit_opt() {
+	echo "$1";
+	if [[ ! -z "$3" ]]; then
+		echo "$3";
+	fi
+	exit "$2";
+}
+
+# params:
+#		1 -- path
+#		2 -- message (optional)
+assert_dir_exists() {
+	if [[ ! -d "$1" ]]; then
+		log_and_exit_opt "Assertion failed: assert_dir_exists: Directory $1 not found. Make sure that the directory exists." "${ret_fnf}" "$2"
+	fi
+}
+
+# params:
+#		1 -- actual value
+#		2 -- expected value
+#		3 -- message (optional)
+assert_equals() {
+	if [[ "$1" -ne "$2" ]]; then
+		log_and_exit_opt "Assertion failed: assert_equals. Received: $1. Expected: $2" "${ret_assert_err}" "$3"
+	fi
+}
+
+# params:
+#		1 -- first value
+#		2 -- second value
+# 	3 -- message (optional)
+assert_not_equals() {
+	if [[ "$1" -eq "$2" ]]; then
+		log_and_exit_opt "Assertion failed: assert_not_equals. Received $1. Expected: not $2" "${ret_assert_err}" "$3"
+	fi
+}
+
+while getopts ${opt_str} opts;
 do
   case $opts in
     "h") 
       usage
-      exit ${RET_SUCCESS}
+      exit ${ret_success}
       ;;
     "v")
-      VERBOSE=0
+      verbose=0
       ;;
     "d")
-      DIRECTORY=${OPTARG}
+      project_parent_dir=${OPTARG}
       ;;
   esac
 done
 
 shift "$(( $OPTIND - 1 ))"
 
-VERBOSE=${VERBOSE:=1}
-DIRECTORY=${DIRECTORY:=$(pwd)}
+verbose=${verbose:=1}
+project_parent_dir=${project_parent_dir:=$(pwd)}
 
-if [[ ! -f ${TEMP_MAKEFILE_PATH} ]]; then
-  echo "File ${TEMP_MAKEFILE_PATH} not found. Ensure that correct path is provided in script source."
-  exit ${RET_TEMP_FILE_NOT_FOUND}
-elif [[ ! -f ${TEMP_CFILE_PATH} ]]; then
-  echo "File ${TEMP_CFILE_PATH} not found. Ensure that correct path is provided in script source."
-  exit ${RET_TEMP_FILE_NOT_FOUND}
-fi
+assert_dir_exists "${templ_dir}"
+assert_dir_exists "${project_parent_dir}"
+assert_equals $# ${arg_count} "Invalid arg count. Expected: ${arg_count}"
 
-if [[ ! -d ${DIRECTORY} ]]; then
-  echo "Directory ${DIRECTORY} not found. Ensure that the directory exists."
-  exit ${RET_TEMP_FILE_NOT_FOUND}
-fi
+project_name=$1
+project_dir=${project_parent_dir}/${project_name}
 
-if [[ $# -ne ${ARG_COUNT} ]]; then
-  echo "Invalid arg count. Expected: ${ARG_COUNT}."
-  usage
-  exit ${RET_BAD_ARG_COUNT}
-fi
-
-PROJECT_NAME=$1
-PROJECT_DIR=${DIRECTORY}/${PROJECT_NAME}
-
-[ ${VERBOSE} -eq 0 ] && info ${DIRECTORY}
+log ${verbose} "Initializing project of name ${project_name} in ${project_parent_dir} directory."
  
-[ ${VERBOSE} -eq 0 ] && echo "Creating ${DIRECTORY}/${PROJECT_NAME} directory"
-mkdir ${PROJECT_DIR}
+if [[ ${verbose} -eq 0 ]]; then
+	cp -rv ${templ_dir} ${project_dir}
+else
+	cp -r ${templ_dir} ${project_dir}
+fi
 
-[ ${VERBOSE} -eq 0 ]  && echo "Creating project structure..."
-
-[ ${VERBOSE} -eq 0 ]  && echo -e "\tCreate src dir"
-mkdir ${PROJECT_DIR}/src
-
-[ ${VERBOSE} -eq 0 ]  && echo -e "\tCreate build/{bin,obj} dirs"
-mkdir -p ${PROJECT_DIR}/build/{bin,obj}
-
-[ ${VERBOSE} -eq 0 ]  && echo -e "\tCreate main.c file"
-cp ${TEMP_CFILE_PATH} ${PROJECT_DIR}/src/main.c
-
-[ ${VERBOSE} -eq 0 ]  && echo -e "\tCreate makefile"
-cp ${TEMP_MAKEFILE_PATH} ${PROJECT_DIR}/makefile
-
-exit ${RET_SUCCESS};
+exit ${ret_success};
