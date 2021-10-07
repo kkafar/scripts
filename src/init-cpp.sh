@@ -14,7 +14,6 @@ source ${SCRIPTS_DIR}/src/utils.sh
 
 usage() { 
   echo "Usage: $0 [-h (prints this help message)] [-v (verbose mode)] [-d <path> (parent directory of new project)] <project name>";
-  exit ${ret_success}; 
 }
 
 info() {
@@ -27,6 +26,7 @@ do
   case $opts in
     "h") 
       usage
+			echo ${ret_success}
       ;;
     "v")
       verbose=0
