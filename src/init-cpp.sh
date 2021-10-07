@@ -1,25 +1,15 @@
 #!/bin/bash
 
-templ_dir=${SCRIPTS_DIR}/templates/cpp-templ
-
-# RETURN CODES 
-ret_success=0
-ret_fnf=1
-ret_bad_arg_count=2
-ret_assert_err=3
-ret_env_err=4
-
 if [[ -z ${SCRIPTS_DIR} ]]; then
-	echo "SCRIPTS_DIR environment variable is not define. 
+	echo "SCRIPTS_DIR environment variable is not defined. 
 	Follow these installation steps https://github.com/kkafar/scripts#installation"
-	exit ${ret_env_err}
+	exit -1
 fi
 
-# OPTIONS
-opt_str="hvd:"
-
+templ_dir=${SCRIPTS_DIR}/templates/cpp-templ
 arg_count=1
 
+source ${SCRIPTS_DIR}/src/return-codes.sh
 source ${SCRIPTS_DIR}/src/utils.sh
 
 usage() { 
@@ -27,17 +17,16 @@ usage() {
   exit ${ret_success}; 
 }
 
-# 
 info() {
   echo "Initializing $1 directory";
 }
 
+opt_str="hvd:"
 while getopts ${opt_str} opts;
 do
   case $opts in
     "h") 
       usage
-      exit ${ret_success}
       ;;
     "v")
       verbose=0
