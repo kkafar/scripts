@@ -1,6 +1,6 @@
 #!/bin/bash
 
-templ_dir=${TEMPLATES_PATH}/cpp-templ
+templ_dir=${SCRIPTS_DIR}/templates/cpp-templ
 
 # RETURN CODES 
 ret_success=0

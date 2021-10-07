@@ -1,6 +1,6 @@
 #!/bin/bash
 
-templ_dir=${TEMPLATES_PATH}/c-templ
+templ_dir=${SCRIPTS_DIR}/templates/c-templ
 
 # RETURN CODES 
 ret_success=0
