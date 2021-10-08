@@ -1,3 +1,15 @@
+### Scripts
+
+#### Useful
+
+* `init-proj.sh`
+
+#### Utility
+
+* `return-codes.sh`
+* `templ-paths.sh`
+* `utils.sh`
+
 ### Installation
 
 1. Some scripts depend on `SCRIPTS_DIR` environment variable being defined,
@@ -7,10 +19,10 @@
 	export SCRIPTS_DIR=<path-to-this-repository>
 	```
 
-2. To simpify calling scripts create symlinks:
+2. To simpify usage of the scripts you may create symlinks:
 
 	```bash
-	ln -s <path-to-particular-script> <script-name>
+	ln -s <path-to-particular-script> <path-to-some-PATH-folder>/<script-name>
 	```
 
 	for example
