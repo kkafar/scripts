@@ -2,13 +2,13 @@
 
 #### Useful
 
-* `init-proj.sh`
+* [`init-proj.sh`](src/init-proj.sh)
 
 #### Utility
 
-* `return-codes.sh`
-* `templ-paths.sh`
-* `utils.sh`
+* [`return-codes.sh`](src/return-codes.sh)
+* [`templ-paths.sh`](src/templ-paths.sh)
+* [`utils.sh`](src/utils.sh)
 
 ### Installation
 
