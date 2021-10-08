@@ -19,14 +19,4 @@
 	export SCRIPTS_DIR=<path-to-this-repository>
 	```
 
-2. To simpify usage of the scripts you may create symlinks:
-
-	```bash
-	ln -s <path-to-particular-script> <path-to-some-PATH-folder>/<script-name>
-	```
-
-	for example
-
-	```bash
-	ln -s $SCRIPTS_DIR/src/init-cpp.sh init-cpp
-	```
+2. To simpify usage of the scripts you may want to add scripts dir to your `PATH`.
