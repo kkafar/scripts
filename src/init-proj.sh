@@ -34,7 +34,7 @@ do
   case $opt in
     "h") 
       usage
-			exit ${ret_success}
+      exit ${ret_success}
       ;;
     "v")
       verbose=0
