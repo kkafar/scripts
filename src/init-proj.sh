@@ -20,7 +20,6 @@ OPTIONS:\n
 \t-v (verbose mode)\n
 \t-d DIR_PATH (directory to init project in; defaults to result of pwd)"
 
-
 usage() { 
   echo -e ${usage}
 }
