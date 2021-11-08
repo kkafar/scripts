@@ -1,6 +1,6 @@
 .TARGET: build
 
-SRC_PATH = src
+SRC_PATH = src/main/cpp
 BIN_PATH = build/bin
 OBJ_PATH = build/obj
 
