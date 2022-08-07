@@ -1,2 +1,9 @@
 # mb specific
 rnrvt-inject*
+
+# IDE specific
+.idea
+.vscode
+.netrw*
+
+bin/
