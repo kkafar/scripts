@@ -51,4 +51,4 @@ gsettings set org.cinnamon.desktop.wm.preferences theme "'${WINDOW_BORDERS_THEME
 
 kitty +kitten themes --reload-in=all ${KITTY_THEME}
 
-log_info "Cinnamon theme changed to '${CINNAMON_NEW_THEME}'. Kitty theme changed to '${KITTY_NEW_THEME}'." ${LOG_FILE} 100
+log_info "Cinnamon theme changed to '${DESKTOP_THEME}'. Kitty theme changed to '${KITTY_THEME}'." ${LOG_FILE} 100
