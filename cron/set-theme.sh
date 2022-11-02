@@ -51,4 +51,4 @@ gsettings set org.cinnamon.desktop.wm.preferences theme "'${WINDOW_BORDERS_THEME
 
 kitty +kitten themes --reload-in=all ${KITTY_THEME}
 
-log_info "Desktop: ${DESKTOP_THEME} Mouse: ${MOUSE_THEME} Controls: ${CONTROLS_THEME} Icons: ${ICONS_THEME} Windows: ${WINDOW_BORDERS_THEME} Wallpaper: ${WALLPAPER} Kitty: ${KITTY_THEME}"
+log_info "Desktop: ${DESKTOP_THEME} Mouse: ${MOUSE_THEME} Controls: ${CONTROLS_THEME} Icons: ${ICONS_THEME} Windows: ${WINDOW_BORDERS_THEME} Wallpaper: ${WALLPAPER} Kitty: ${KITTY_THEME}" ${LOG_FILE} 100
